@@ -1,7 +1,9 @@
 # Chess
 
 class Piece
-  def initialize(board, pos, color, moved)
+  attr_reader :color, :pos
+
+  def initialize(board, pos, color, moved = false)
     @board, @pos, @color, @moved = board, pos, color, moved
   end
 
@@ -10,68 +12,137 @@ class Piece
   end
 
   def moves
-    raise "Not yet implemented"
 
+  end
+
+  def inspect
+    { :piece => self.class, :piece_color => self.color}.inspect
+  end
+
+  def is_blocked?(pos)
+    @board.occupied?(pos) && self.color == @board[pos].color
   end
 
 end
 
 
 class Pawn < Piece
-  def initialize
-
-  end
 end
 
 class SlidingPiece < Piece
-  def initialize
-
-  end
 
   def moves
-    move_dirs
+    valid_moves = []
+
+    move_dirs.each do |direction|
+      dx,dy = direction
+      new_position = [@pos[0] + dx, @pos[1] + dy]
+
+      until is_blocked?(new_position) || !@board.on_board?(new_position)
+        if is_opponent_piece?(new_position)
+          valid_moves << new_position
+          break
+        end
+        valid_moves << new_position
+        new_position = [new_position[0] + dx, new_position[1] + dy]
+      end
+    end
+
+    valid_moves
   end
 
-  
+  def is_opponent_piece?(pos)
+    @board.occupied?(pos) && self.color != @board[pos].color
+  end
+
 end
 
 class Rook < SlidingPiece
-  def initialize
-
-  end
 
   def move_dirs
-    puts "Rook Moving"
+    [
+    [0, 1],
+    [1, 0],
+    [-1, 0],
+    [0, -1]
+    ]
   end
 
 end
 
 class Bishop < SlidingPiece
-  def initialize
-
-  end
 
   def move_dirs
-    puts "Bishop moving"
+    [
+    [1, 1],
+    [-1, -1],
+    [1, -1],
+    [-1, 1]
+    ]
   end
 end
 
 class Queen < SlidingPiece
-  def initialize
-
+  def move_dirs
+    [
+    [-1, -1],
+    [-1,  0],
+    [-1,  1],
+    [ 0, -1],
+    [ 0,  1],
+    [ 1, -1],
+    [ 1,  0],
+    [ 1,  1]
+    ]
   end
 end
 
 
 class SteppingPiece < Piece
-  def initialize
+  def moves
+    valid_moves = []
 
+    move_dirs.each do |direction|
+      dx,dy = direction
+      new_position = [@pos[0] + dx, @pos[1] + dy]
+      next if is_blocked?(new_position) || !@board.on_board?(new_position)
+      valid_moves << new_position
+    end
+
+    valid_moves
   end
 end
 
+class Knight < SteppingPiece
+  def move_dirs
+    [
+    [-2, -1],
+    [-2,  1],
+    [-1, -2],
+    [-1,  2],
+    [ 1, -2],
+    [ 1,  2],
+    [ 2, -1],
+    [ 2,  1]
+    ]
+  end
+end
 
+class King < SteppingPiece
+  def move_dirs
+    [
+    [-1, -1],
+    [-1,  0],
+    [-1,  1],
+    [ 0, -1],
+    [ 0,  1],
+    [ 1, -1],
+    [ 1,  0],
+    [ 1,  1]
+    ]
+  end
+end
 
-# end
 # + Piece
 #     + @color
 #     + @pos
