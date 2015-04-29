@@ -1,4 +1,5 @@
 class Board
+<<<<<<< HEAD
   PIECES = [ Rook,
             Knight,
             Bishop,
@@ -12,6 +13,13 @@ class Board
   def initialize
     @board = Array.new(8) { Array.new(8) }
 
+=======
+  PIECES = [Rook, Knight,Bishop,King,Queen,Bishop,Knight,Rook]
+
+
+  def initialize
+    @grid = Array.new(8) {Array.new(8) }
+>>>>>>> refs/remotes/origin/master
     set_piece_positions
   end
 
@@ -22,7 +30,11 @@ class Board
   def in_check?(color)
     other_pieces = []
     king_piece = nil
+<<<<<<< HEAD
     @board.each do |row|
+=======
+    @grid.each do |row|
+>>>>>>> refs/remotes/origin/master
       row.each do |piece|
         next if piece.nil?
         king_piece = piece if piece.class == King && piece.color == color
@@ -31,13 +43,17 @@ class Board
     end
 
     other_pieces.each do |other_piece|
+<<<<<<< HEAD
       next if other_piece.moves.empty?
+=======
+>>>>>>> refs/remotes/origin/master
       return true if other_piece.moves.include?(king_piece.pos)
     end
 
     return false
   end
 
+<<<<<<< HEAD
   def move(start_pos, end_pos)
     raise "Invalid move." if self[start_pos] == nil || !self[start_pos].moves.include?(end_pos)
     start_row, start_col = start_pos
@@ -47,6 +63,8 @@ class Board
     self
   end
 
+=======
+>>>>>>> refs/remotes/origin/master
   def set_piece_positions
     (0..7).each do |row|
       next if row.between?(2,5)
@@ -55,7 +73,11 @@ class Board
           self[row,col] = PIECES[col].new(self,[row,col],:white,false)
         elsif row == 7
           self[row,col] = PIECES.reverse[col].new(self,[row,col],:black,false)
+<<<<<<< HEAD
         elsif row == 1
+=======
+        # elsif row == 1
+>>>>>>> refs/remotes/origin/master
         #   self[row,col] = Pawn.new(self,[row,col],:white,false)
         # else
         #   self[row,col] = Pawn.new(self,[row,col],:black,false)
@@ -64,6 +86,7 @@ class Board
     end
   end
 
+<<<<<<< HEAD
   def render
     # new_grid = []
     # (0..7).each do |row|
@@ -122,18 +145,28 @@ class Board
     new_board
   end
 
+=======
+>>>>>>> refs/remotes/origin/master
   def occupied?(pos)
     self[pos]
   end
 
   def [](pos)
     row,col = pos
+<<<<<<< HEAD
     @board[row][col]
+=======
+    @grid[row][col]
+>>>>>>> refs/remotes/origin/master
   end
 
   def []=(row,col,value)
     # row,col = pos
+<<<<<<< HEAD
     @board[row][col] = value
+=======
+    @grid[row][col] = value
+>>>>>>> refs/remotes/origin/master
   end
 end
 
