@@ -1,4 +1,4 @@
-# Chess
+
 
 class Piece
   attr_reader :color, :pos
@@ -7,12 +7,17 @@ class Piece
     @board, @pos, @color, @moved = board, pos, color, moved
   end
 
-  def symbol
-    raise NotImplementedError.new
+  def moves(potential_moves) #Causes a bug
+    valid_moves = potential_moves.reject { |move| move_into_check?(move) }
+    valid_moves
   end
 
-  def moves
+  def display
+  end
 
+  def move_into_check?(pos)
+    board_dup = @board.dup
+    board_dup.move(@pos, pos).in_check?(@color) # TA: make #move actually chainable
   end
 
   def inspect
@@ -25,14 +30,22 @@ class Piece
 
 end
 
-
 class Pawn < Piece
+  def move_dirs
+    [
+    [1,0],
+    [-1,0]
+    ]
+  end
+
+  def display
+    self.color == :white ? "\u2659 " : "\u265F ".colorize(:black)
+  end
 end
 
 class SlidingPiece < Piece
-
   def moves
-    valid_moves = []
+    potential_moves = []
 
     move_dirs.each do |direction|
       dx,dy = direction
@@ -40,15 +53,15 @@ class SlidingPiece < Piece
 
       until is_blocked?(new_position) || !@board.on_board?(new_position)
         if is_opponent_piece?(new_position)
-          valid_moves << new_position
+          potential_moves << new_position
           break
         end
-        valid_moves << new_position
+        potential_moves << new_position
         new_position = [new_position[0] + dx, new_position[1] + dy]
       end
     end
 
-    valid_moves
+    super(potential_moves)
   end
 
   def is_opponent_piece?(pos)
@@ -58,7 +71,6 @@ class SlidingPiece < Piece
 end
 
 class Rook < SlidingPiece
-
   def move_dirs
     [
     [0, 1],
@@ -68,10 +80,13 @@ class Rook < SlidingPiece
     ]
   end
 
+  def display
+    self.color == :white ? "\u2656 " : "\u265C ".colorize(:black)
+  end
+
 end
 
 class Bishop < SlidingPiece
-
   def move_dirs
     [
     [1, 1],
@@ -79,6 +94,10 @@ class Bishop < SlidingPiece
     [1, -1],
     [-1, 1]
     ]
+  end
+
+  def display
+    self.color == :white ? "\u2657 " : "\u265D ".colorize(:black)
   end
 end
 
@@ -95,21 +114,24 @@ class Queen < SlidingPiece
     [ 1,  1]
     ]
   end
-end
 
+  def display
+    self.color == :white ? "\u2655 " : "\u265B ".colorize(:black)
+  end
+end
 
 class SteppingPiece < Piece
   def moves
-    valid_moves = []
+    potential_moves = []
 
     move_dirs.each do |direction|
       dx,dy = direction
       new_position = [@pos[0] + dx, @pos[1] + dy]
       next if is_blocked?(new_position) || !@board.on_board?(new_position)
-      valid_moves << new_position
+      potential_moves << new_position
     end
 
-    valid_moves
+    super(potential_moves)
   end
 end
 
@@ -126,6 +148,10 @@ class Knight < SteppingPiece
     [ 2,  1]
     ]
   end
+
+  def display
+    self.color == :white ? "\u2658 " : "\u265E ".colorize(:black)
+  end
 end
 
 class King < SteppingPiece
@@ -140,6 +166,10 @@ class King < SteppingPiece
     [ 1,  0],
     [ 1,  1]
     ]
+  end
+
+  def display
+    self.color == :white ? "\u2654 " : "\u265A ".colorize(:black)
   end
 end
 

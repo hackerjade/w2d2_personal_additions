@@ -2,6 +2,7 @@ require_relative 'piece'
 require_relative 'board'
 require_relative 'player'
 require 'byebug'
+require 'colorize'
 
 class Game
   attr_reader :board, :player1, :player2
@@ -15,6 +16,10 @@ class Game
   end
 end
 
-if __FILE__ != $PROGRAM_NAME
-  # game = Game.new
-end
+
+game = Game.new
+board1 = game.board
+board2 = board1.dup
+# board2.move([0,0], [1,0])
+# p board1[[0,4]].moves
+puts board1.render
